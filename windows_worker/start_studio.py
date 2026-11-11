@@ -11,6 +11,7 @@ from pathlib import Path
 from urllib.parse import unquote, urlparse
 
 import video_maker
+import studio_settings
 
 ROOT = Path(__file__).resolve().parent.parent
 DASHBOARD = ROOT / "dashboard"
@@ -67,6 +68,8 @@ class StudioHandler(SimpleHTTPRequestHandler):
         path = urlparse(self.path).path
         if path == "/api/health":
             return self.send_json(200, {"ok": True, "message": "برنامهٔ ویندوزی وصل است"})
+        if path == "/api/settings":
+            return self.send_json(200, {"settings": studio_settings.load_settings()})
         if path == "/api/ffmpeg/status":
             executable = find_ffmpeg()
             if not executable:
@@ -166,6 +169,17 @@ class StudioHandler(SimpleHTTPRequestHandler):
 
     def do_PUT(self):
         path = urlparse(self.path).path
+        if path == "/api/settings":
+            try:
+                payload = self.read_body()
+                if not isinstance(payload, dict):
+                    return self.send_json(400, {"error": "تنظیمات ارسالی معتبر نیست."})
+                saved = studio_settings.save_settings(payload)
+                return self.send_json(200, {"ok": True, "settings": saved})
+            except (ValueError, UnicodeDecodeError, json.JSONDecodeError) as error:
+                return self.send_json(400, {"error": str(error) or "تنظیمات معتبر نیست."})
+            except OSError as error:
+                return self.send_json(500, {"error": f"خطا در ذخیرهٔ تنظیمات: {error}"})
         if not path.startswith("/api/projects/"):
             return self.send_json(404, {"error": "این مسیر شناخته نشد."})
         try:
