@@ -10,6 +10,8 @@ from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from urllib.parse import unquote, urlparse
 
+import video_maker
+
 ROOT = Path(__file__).resolve().parent.parent
 DASHBOARD = ROOT / "dashboard"
 WORKSPACE = ROOT / "workspace" / "projects"
@@ -100,6 +102,10 @@ class StudioHandler(SimpleHTTPRequestHandler):
 
     def do_POST(self):
         path = urlparse(self.path).path
+        if path == "/api/media/upload":
+            return video_maker.upload(self)
+        if path == "/api/render/slideshow":
+            return video_maker.render(self)
         if path == "/api/render/test":
             try:
                 self.read_body()
