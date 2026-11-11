@@ -2,6 +2,8 @@ from __future__ import annotations
 
 import json
 import re
+import shutil
+import subprocess
 import uuid
 from datetime import datetime, timezone
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
@@ -11,9 +13,20 @@ from urllib.parse import unquote, urlparse
 ROOT = Path(__file__).resolve().parent.parent
 DASHBOARD = ROOT / "dashboard"
 WORKSPACE = ROOT / "workspace" / "projects"
+RENDERS = ROOT / "workspace" / "renders"
 HOST = "127.0.0.1"
 PORT = 8765
 STAGES = ["ایده", "سناریو", "پرامپت و منابع", "تولید و تدوین", "بررسی کیفیت", "آماده‌سازی نشر", "آماده"]
+FFMPEG_FALLBACK = Path(r"C:\ffmpeg\ffmpeg-9.0.2-essentials_build\bin\ffmpeg.exe")
+
+
+def find_ffmpeg():
+    found = shutil.which("ffmpeg")
+    if found:
+        return found
+    if FFMPEG_FALLBACK.is_file():
+        return str(FFMPEG_FALLBACK)
+    return None
 
 
 def read_project(project_id: str):
@@ -52,6 +65,23 @@ class StudioHandler(SimpleHTTPRequestHandler):
         path = urlparse(self.path).path
         if path == "/api/health":
             return self.send_json(200, {"ok": True, "message": "برنامهٔ ویندوزی وصل است"})
+        if path == "/api/ffmpeg/status":
+            executable = find_ffmpeg()
+            if not executable:
+                return self.send_json(200, {"available": False, "message": "FFmpeg پیدا نشد."})
+            try:
+                result = subprocess.run(
+                    [executable, "-version"], capture_output=True, text=True,
+                    encoding="utf-8", errors="replace", timeout=15, check=False
+                )
+                first_line = (result.stdout or result.stderr).splitlines()[0]
+                return self.send_json(200, {
+                    "available": result.returncode == 0,
+                    "message": first_line,
+                    "path": executable
+                })
+            except (OSError, subprocess.TimeoutExpired) as error:
+                return self.send_json(200, {"available": False, "message": str(error)})
         if path == "/api/projects":
             WORKSPACE.mkdir(parents=True, exist_ok=True)
             projects = []
@@ -69,7 +99,39 @@ class StudioHandler(SimpleHTTPRequestHandler):
         return super().do_GET()
 
     def do_POST(self):
-        if urlparse(self.path).path != "/api/projects":
+        path = urlparse(self.path).path
+        if path == "/api/render/test":
+            try:
+                self.read_body()
+                executable = find_ffmpeg()
+                if not executable:
+                    return self.send_json(400, {"error": "FFmpeg پیدا نشد. نصب و مسیر آن را بررسی کن."})
+                RENDERS.mkdir(parents=True, exist_ok=True)
+                filename = "ffmpeg_test_" + datetime.now().strftime("%Y%m%d_%H%M%S") + ".mp4"
+                output = RENDERS / filename
+                command = [
+                    executable, "-hide_banner", "-loglevel", "error", "-y",
+                    "-f", "lavfi", "-i", "color=c=blue:s=640x360:r=25:d=3",
+                    "-an", "-c:v", "libx264", "-preset", "ultrafast",
+                    "-threads", "2", "-pix_fmt", "yuv420p", "-movflags", "+faststart",
+                    str(output)
+                ]
+                result = subprocess.run(command, capture_output=True, text=True, encoding="utf-8",
+                                        errors="replace", timeout=60, check=False)
+                if result.returncode != 0 or not output.is_file() or output.stat().st_size == 0:
+                    detail = (result.stderr or "فایل ویدیویی ساخته نشد.")[-2500:]
+                    return self.send_json(500, {"error": detail})
+                return self.send_json(200, {
+                    "ok": True, "message": "ویدیوی آزمایشی با موفقیت ساخته شد.",
+                    "file": str(output), "size_bytes": output.stat().st_size
+                })
+            except (ValueError, UnicodeDecodeError, json.JSONDecodeError) as error:
+                return self.send_json(400, {"error": str(error) or "درخواست معتبر نیست."})
+            except subprocess.TimeoutExpired:
+                return self.send_json(500, {"error": "ساخت ویدیو بیش از ۶۰ ثانیه طول کشید و متوقف شد."})
+            except OSError as error:
+                return self.send_json(500, {"error": f"خطا در اجرای FFmpeg: {error}"})
+        if path != "/api/projects":
             return self.send_json(404, {"error": "این مسیر شناخته نشد."})
         try:
             payload = self.read_body()
