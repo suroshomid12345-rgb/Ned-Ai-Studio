@@ -7,7 +7,7 @@ from urllib.parse import parse_qs, urlparse
 ROOT = Path(__file__).resolve().parent.parent
 MEDIA = ROOT / "workspace" / "media"
 RENDERS = ROOT / "workspace" / "renders"
-FALLBACK = Path(r"C:\\ffmpeg\\ffmpeg-9.0.2-essentials_build\\bin\\ffmpeg.exe")
+FALLBACK = Path(r"C:\ffmpeg\ffmpeg-9.0.2-essentials_build\bin\ffmpeg.exe")
 ALLOWED = {".jpg", ".jpeg", ".png", ".webp"}
 
 def ffmpeg_path():
@@ -50,7 +50,7 @@ def render(handler):
             width, height = 720, 1280
         files = []
         for name in names:
-            if not isinstance(name, str) or not re.fullmatch(r"[a-f0-9]{32}\\.(jpg|jpeg|png|webp)", name):
+            if not isinstance(name, str) or not re.fullmatch(r"[a-f0-9]{32}\.(jpg|jpeg|png|webp)", name):
                 return handler.send_json(400, {"error":"نام یکی از تصاویر معتبر نیست."})
             file = MEDIA / name
             if not file.is_file():
@@ -77,7 +77,7 @@ def render(handler):
                 return handler.send_json(500,{"error":(result.stderr or "ساخت صحنه ناموفق بود.")[-1800:]})
             segments.append(segment)
         concat = RENDERS / f"concat_{job}.txt"
-        concat.write_text("".join("file '"+p.as_posix().replace("'","'\\''")+"'\\n" for p in segments),encoding="utf-8")
+        concat.write_text("".join("file '"+p.as_posix().replace("'","'\\''")+"\n" for p in segments),encoding="utf-8")
         output = RENDERS / f"ned_ai_video_{datetime.now().strftime('%Y%m%d_%H%M%S')}_{job}.mp4"
         cmd = [exe,"-hide_banner","-loglevel","error","-y","-f","concat","-safe","0","-i",str(concat),
                "-c","copy","-movflags","+faststart",str(output)]
