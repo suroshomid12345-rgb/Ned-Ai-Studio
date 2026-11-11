@@ -9,12 +9,12 @@
 </head>
 <body>
   <header class="topbar">
-    <div><span class="eyebrow">CONTENT WORKSPACE · V2</span><h1>Ned_Ai Studio</h1><p>مرکز مدیریت تولید محتوای YouTube و TikTok</p></div>
+    <div><span class="eyebrow">CONTENT WORKSPACE · V3</span><h1>Ned_Ai Studio</h1><p>مرکز مدیریت تولید محتوای YouTube و TikTok</p></div>
     <div id="connection" class="status"><span class="dot"></span><span>در حال بررسی اتصال...</span></div>
   </header>
   <main>
     <section class="welcome panel">
-      <div><span class="eyebrow">نسخهٔ دوم · محلی و رایگان</span><h2>از ایده تا ویدیوی آماده</h2><p>ایده، سناریو، پرامپت، اطلاعات نشر و بررسی کیفیت را در یک‌جا مدیریت کن. فایل‌ها روی لپ‌تاپت باقی می‌مانند.</p></div>
+      <div><span class="eyebrow">نسخهٔ سوم · محلی و رایگان</span><h2>از ایده تا ویدیوی آماده</h2><p>مدیریت پروژه‌ها و آزمایش موتور تدوین محلی؛ فایل‌ها روی لپ‌تاپت باقی می‌مانند.</p></div>
       <div class="big-mark">N<span>AI</span></div>
     </section>
     <nav class="nav-tabs" aria-label="بخش‌های استودیو">
@@ -87,19 +87,25 @@
     </section>
     <section id="workflow-view" class="view">
       <section class="panel">
+        <h2>موتور تدوین محلی</h2>
+        <p class="muted">این آزمایش فقط یک ویدیوی آبی سه‌ثانیه‌ای می‌سازد تا اتصال واقعی FFmpeg و ذخیره‌سازی روی لپ‌تاپ بررسی شود.</p>
+        <button id="run-ffmpeg-test" type="button">ساخت ویدیوی آزمایشی با FFmpeg</button>
+        <p id="render-test-message" class="message" role="status"></p>
+      </section>
+      <section class="panel">
         <h2>مراحل تولید محتوا</h2>
         <div class="workflow-list">
           <article><b>۱ · ایده و تحقیق</b><p>انتخاب موضوع، مخاطب و هدف ویدیو؛ بررسی ترند از منابع معتبر.</p></article>
           <article><b>۲ · سناریو و پرامپت</b><p>نوشتن شروع جذاب، روایت، صحنه‌ها، دیالوگ و پرامپت‌های تولید.</p></article>
-          <article><b>۳ · تولید و تدوین</b><p>ساخت فایل‌ها با ابزارهای نصب‌شده مانند Blender و FFmpeg؛ این نسخه هنوز رندر خودکار را اجرا نمی‌کند.</p></article>
+          <article><b>۳ · تولید و تدوین</b><p>آزمایش رندر محلی با FFmpeg فعال است؛ ساخت کامل ویدیو از متن و تصویر هنوز در حال توسعه است.</p></article>
           <article><b>۴ · بررسی کیفیت</b><p>بازبینی صدا، تصویر، زیرنویس، حق نشر و نسبت تصویر.</p></article>
           <article><b>۵ · آماده‌سازی نشر</b><p>عنوان، توضیحات، هشتگ و تامبنیل؛ انتشار فقط با تأیید جداگانهٔ تو.</p></article>
         </div>
       </section>
     </section>
-    <section class="panel roadmap"><h2>وضعیت اتصال‌ها</h2><p class="muted">داشبورد و ذخیره‌سازی پروژه‌ها محلی است. اتصال مدل هوش مصنوعی، جمع‌آوری خودکار ترند، رندر خودکار و انتشار حساب‌ها هنوز فعال نشده‌اند. برای جلوگیری از هزینه، هیچ API پولی به‌صورت پیش‌فرض وصل نیست.</p></section>
+    <section class="panel roadmap"><h2>وضعیت اتصال‌ها</h2><p class="muted">داشبورد و ذخیره‌سازی پروژه‌ها محلی است. اتصال مدل هوش مصنوعی، جمع‌آوری خودکار ترند، تولید کامل ویدیو و انتشار حساب‌ها هنوز فعال نشده‌اند. برای جلوگیری از هزینه، هیچ API پولی به‌صورت پیش‌فرض وصل نیست.</p></section>
   </main>
-  <footer>ساخته‌شده برای Ned_Ai · نسخهٔ دوم آزمایشی محلی</footer>
+  <footer>ساخته‌شده برای Ned_Ai · نسخهٔ سوم آزمایشی محلی</footer>
   <script src="app.js"></script>
 </body>
 </html>
