@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#111827">
+  <title>Ned_Ai Studio</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="topbar">
+    <div><span class="eyebrow">CONTENT WORKSPACE</span><h1>Ned_Ai Studio</h1><p>مرکز مدیریت تولید محتوای YouTube و TikTok</p></div>
+    <div id="connection" class="status"><span class="dot"></span><span>در حال بررسی اتصال...</span></div>
+  </header>
+  <main>
+    <section class="welcome panel">
+      <div><span class="eyebrow">نسخهٔ اول · محلی و رایگان</span><h2>از ایده تا ویدیوی آماده</h2><p>پروژه‌ها را ثبت و مرحلهٔ تولید آن‌ها را پیگیری کن. فایل‌های اصلی روی لپ‌تاپت باقی می‌مانند.</p></div>
+      <div class="big-mark">N<span>AI</span></div>
+    </section>
+    <section class="layout">
+      <section class="panel">
+        <h2>ساخت پروژهٔ تازه</h2>
+        <form id="project-form">
+          <label for="project-name">نام پروژه</label>
+          <input id="project-name" name="name" maxlength="80" placeholder="مثلاً: داستان ربات آخر شهر" required>
+          <label for="project-type">نوع محتوا</label>
+          <select id="project-type" name="type">
+            <option value="AI Video">ویدیوی AI</option>
+            <option value="2D Animation">انیمیشن 2D</option>
+            <option value="3D Animation">انیمیشن 3D</option>
+            <option value="Comedy">کمدی</option>
+            <option value="Story">داستان</option>
+            <option value="Facts">حقایق جالب</option>
+          </select>
+          <label for="project-language">زبان</label>
+          <select id="project-language" name="language">
+            <option value="Dari + English">دری و انگلیسی</option>
+            <option value="Dari">دری</option>
+            <option value="English">انگلیسی</option>
+          </select>
+          <button type="submit">ساخت پروژه</button>
+          <p id="form-message" class="message" role="status"></p>
+        </form>
+      </section>
+      <section class="panel">
+        <div class="section-heading"><h2>پروژه‌های من</h2><button id="refresh" class="secondary" type="button">تازه‌سازی</button></div>
+        <div id="projects" class="projects"><p class="muted">برای دیدن پروژه‌ها، برنامهٔ ویندوزی را اجرا کن.</p></div>
+      </section>
+    </section>
+    <section class="panel roadmap">
+      <h2>مراحل بعدی سیستم</h2>
+      <div class="steps"><span>۱ · ایده و سناریو</span><span>۲ · پرامپت و منابع</span><span>۳ · تولید و تدوین</span><span>۴ · بررسی کیفیت</span><span>۵ · آماده‌سازی نشر</span></div>
+      <p class="muted">نشر خودکار تا زمان اتصال امن حساب‌ها و تأیید جداگانه فعال نخواهد شد.</p>
+    </section>
+  </main>
+  <footer>ساخته‌شده برای Ned_Ai · نسخهٔ آزمایشی محلی</footer>
+  <script src="app.js"></script>
+</body>
+</html>
