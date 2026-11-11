@@ -13,6 +13,31 @@ async function api(path, options = {}) {
   return data;
 }
 
+async function loadProjects() {
+  const data = await api("/api/projects");
+  projectsBox.replaceChildren();
+  if (!data.projects.length) {
+    const empty = document.createElement("p");
+    empty.className = "muted";
+    empty.textContent = "هنوز پروژه‌ای ثبت نشده است.";
+    projectsBox.append(empty);
+    return;
+  }
+  for (const project of data.projects) {
+    const item = document.createElement("article");
+    item.className = "project";
+    const title = document.createElement("strong");
+    title.textContent = project.name;
+    const details = document.createElement("small");
+    details.textContent = [project.type, project.language, new Date(project.created_at).toLocaleDateString()].join(" · ");
+    const tag = document.createElement("span");
+    tag.className = "tag";
+    tag.textContent = project.status || "ایده";
+    item.append(title, details, document.createElement("br"), tag);
+    projectsBox.append(item);
+  }
+}
+
 async function checkConnection() {
   try {
     const data = await api("/api/health");
@@ -22,35 +47,11 @@ async function checkConnection() {
   } catch {
     connection.classList.remove("online");
     connection.lastElementChild.textContent = "برنامهٔ ویندوزی اجرا نیست";
-    projectsBox.innerHTML = '<p class="muted">فایل start_studio.py را اجرا کن تا داشبورد به برنامه وصل شود.</p>';
-  }
-}
-
-async function loadProjects() {
-  try {
-    const data = await api("/api/projects");
-    if (!data.projects.length) {
-      projectsBox.innerHTML = '<p class="muted">هنوز پروژه‌ای ثبت نشده است.</p>';
-      return;
-    }
-    projectsBox.innerHTML = data.projects.map(project => {
-      const item = document.createElement("article");
-      item.className = "project";
-      const title = document.createElement("strong");
-      title.textContent = project.name;
-      const details = document.createElement("small");
-      details.textContent = [project.type, project.language, new Date(project.created_at).toLocaleDateString()].join(" · ");
-      const tag = document.createElement("span");
-      tag.className = "tag";
-      tag.textContent = project.status || "ایده";
-      item.append(title, details, document.createElement("br"), tag);
-      return item;
-    });
-    // Replace children with DOM nodes; project text is never interpreted as HTML.
-    const nodes = Array.from(projectsBox.children);
-    projectsBox.replaceChildren(...nodes);
-  } catch (error) {
-    projectsBox.textContent = error.message;
+    projectsBox.replaceChildren();
+    const hint = document.createElement("p");
+    hint.className = "muted";
+    hint.textContent = "فایل start_studio.py را اجرا کن تا داشبورد به برنامه وصل شود.";
+    projectsBox.append(hint);
   }
 }
 
