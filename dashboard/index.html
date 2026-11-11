@@ -93,6 +93,19 @@
         <p id="render-test-message" class="message" role="status"></p>
       </section>
       <section class="panel">
+        <h2>ساخت ویدیو از تصاویر</h2>
+        <p class="muted">تصاویر خودت را انتخاب کن؛ برنامه با حرکت زوم ملایم و تدوین خودکار، فایل MP4 می‌سازد. تصاویر فقط روی همین لپ‌تاپ ذخیره می‌شوند.</p>
+        <label for="video-images">انتخاب تصاویر (حداکثر ۱۲ تصویر، هرکدام تا ۱۵ مگابایت)</label>
+        <input id="video-images" type="file" accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp" multiple>
+        <div class="field-grid">
+          <div><label for="image-seconds">مدت نمایش هر تصویر</label><select id="image-seconds"><option value="3">۳ ثانیه</option><option value="4" selected>۴ ثانیه</option><option value="5">۵ ثانیه</option><option value="6">۶ ثانیه</option><option value="8">۸ ثانیه</option><option value="10">۱۰ ثانیه</option></select></div>
+          <div><label for="video-aspect">قالب ویدیو</label><select id="video-aspect"><option value="9:16">عمودی 9:16 · TikTok / Shorts</option><option value="16:9">افقی 16:9 · YouTube</option></select></div>
+        </div>
+        <p id="image-upload-message" class="message" role="status"></p>
+        <button id="make-image-video" type="button">ساخت ویدیوی MP4 از تصاویر</button>
+        <p id="image-video-message" class="message" role="status"></p>
+      </section>
+      <section class="panel">
         <h2>مراحل تولید محتوا</h2>
         <div class="workflow-list">
           <article><b>۱ · ایده و تحقیق</b><p>انتخاب موضوع، مخاطب و هدف ویدیو؛ بررسی ترند از منابع معتبر.</p></article>
