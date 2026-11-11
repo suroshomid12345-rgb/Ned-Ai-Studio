@@ -9,51 +9,97 @@
 </head>
 <body>
   <header class="topbar">
-    <div><span class="eyebrow">CONTENT WORKSPACE</span><h1>Ned_Ai Studio</h1><p>مرکز مدیریت تولید محتوای YouTube و TikTok</p></div>
+    <div><span class="eyebrow">CONTENT WORKSPACE · V2</span><h1>Ned_Ai Studio</h1><p>مرکز مدیریت تولید محتوای YouTube و TikTok</p></div>
     <div id="connection" class="status"><span class="dot"></span><span>در حال بررسی اتصال...</span></div>
   </header>
   <main>
     <section class="welcome panel">
-      <div><span class="eyebrow">نسخهٔ اول · محلی و رایگان</span><h2>از ایده تا ویدیوی آماده</h2><p>پروژه‌ها را ثبت و مرحلهٔ تولید آن‌ها را پیگیری کن. فایل‌های اصلی روی لپ‌تاپت باقی می‌مانند.</p></div>
+      <div><span class="eyebrow">نسخهٔ دوم · محلی و رایگان</span><h2>از ایده تا ویدیوی آماده</h2><p>ایده، سناریو، پرامپت، اطلاعات نشر و بررسی کیفیت را در یک‌جا مدیریت کن. فایل‌ها روی لپ‌تاپت باقی می‌مانند.</p></div>
       <div class="big-mark">N<span>AI</span></div>
     </section>
-    <section class="layout">
-      <section class="panel">
-        <h2>ساخت پروژهٔ تازه</h2>
-        <form id="project-form">
-          <label for="project-name">نام پروژه</label>
-          <input id="project-name" name="name" maxlength="80" placeholder="مثلاً: داستان ربات آخر شهر" required>
-          <label for="project-type">نوع محتوا</label>
-          <select id="project-type" name="type">
-            <option value="AI Video">ویدیوی AI</option>
-            <option value="2D Animation">انیمیشن 2D</option>
-            <option value="3D Animation">انیمیشن 3D</option>
-            <option value="Comedy">کمدی</option>
-            <option value="Story">داستان</option>
-            <option value="Facts">حقایق جالب</option>
-          </select>
-          <label for="project-language">زبان</label>
-          <select id="project-language" name="language">
-            <option value="Dari + English">دری و انگلیسی</option>
-            <option value="Dari">دری</option>
-            <option value="English">انگلیسی</option>
-          </select>
-          <button type="submit">ساخت پروژه</button>
-          <p id="form-message" class="message" role="status"></p>
+    <nav class="nav-tabs" aria-label="بخش‌های استودیو">
+      <button class="nav-tab active" data-view="projects-view">پروژه‌ها و داشبورد</button>
+      <button class="nav-tab" data-view="research-view">یافتن ترند و ایده</button>
+      <button class="nav-tab" data-view="workflow-view">روند تولید</button>
+    </nav>
+    <section id="projects-view" class="view active">
+      <section class="layout">
+        <section class="panel">
+          <h2>ساخت پروژهٔ تازه</h2>
+          <form id="project-form">
+            <label for="project-name">نام پروژه</label>
+            <input id="project-name" name="name" maxlength="80" placeholder="مثلاً: داستان ربات آخر شهر" required>
+            <label for="project-type">نوع محتوا</label>
+            <select id="project-type" name="type">
+              <option value="AI Video">ویدیوی AI</option><option value="2D Animation">انیمیشن 2D</option>
+              <option value="3D Animation">انیمیشن 3D</option><option value="Comedy">کمدی</option>
+              <option value="Story">داستان</option><option value="Facts">حقایق جالب</option>
+            </select>
+            <label for="project-language">زبان</label>
+            <select id="project-language" name="language">
+              <option value="Dari + English">دری و انگلیسی</option><option value="Dari">دری</option><option value="English">انگلیسی</option>
+            </select>
+            <button type="submit">ساخت پروژه</button><p id="form-message" class="message" role="status"></p>
+          </form>
+        </section>
+        <section class="panel">
+          <div class="section-heading"><h2>پروژه‌های من</h2><button id="refresh" class="secondary" type="button">تازه‌سازی</button></div>
+          <div id="projects" class="projects"><p class="muted">در حال بارگذاری...</p></div>
+        </section>
+      </section>
+      <section id="editor" class="panel editor hidden">
+        <div class="section-heading"><div><span class="eyebrow">PROJECT WORKBENCH</span><h2 id="editor-title">ویرایش پروژه</h2></div><button id="close-editor" class="secondary" type="button">بستن</button></div>
+        <form id="project-editor">
+          <div class="field-grid">
+            <div><label for="edit-name">نام پروژه</label><input id="edit-name" name="name" maxlength="80" required></div>
+            <div><label for="edit-status">مرحلهٔ فعلی</label><select id="edit-status" name="status"><option>ایده</option><option>سناریو</option><option>پرامپت و منابع</option><option>تولید و تدوین</option><option>بررسی کیفیت</option><option>آماده‌سازی نشر</option><option>آماده</option></select></div>
+            <div><label for="edit-audience">مخاطب</label><input id="edit-audience" name="audience"></div>
+            <div><label for="edit-duration">مدت ویدیو</label><input id="edit-duration" name="duration" placeholder="مثلاً ۶۰ ثانیه"></div>
+            <div><label for="edit-format">قالب تصویر</label><select id="edit-format" name="format"><option>عمودی 9:16</option><option>افقی 16:9</option><option>مربعی 1:1</option></select></div>
+          </div>
+          <label for="edit-idea">ایده و خلاصهٔ ویدیو</label><textarea id="edit-idea" name="idea" rows="3" placeholder="موضوع، اتفاق اصلی و جذابیت ویدیو..."></textarea>
+          <label for="edit-script">سناریو و متن گویندگی</label><textarea id="edit-script" name="script" rows="6" placeholder="شروع جذاب، بخش اصلی و پایان..."></textarea>
+          <label for="edit-prompts">پرامپت‌ها و صحنه‌ها</label><textarea id="edit-prompts" name="scene_prompts" rows="5" placeholder="پرامپت هر صحنه را جداگانه بنویس..."></textarea>
+          <div class="field-grid">
+            <div><label for="edit-title-dari">عنوان دری</label><input id="edit-title-dari" name="title_dari"></div>
+            <div><label for="edit-title-en">عنوان انگلیسی</label><input id="edit-title-en" name="title_english"></div>
+          </div>
+          <label for="edit-description">توضیحات نشر</label><textarea id="edit-description" name="description" rows="3"></textarea>
+          <label for="edit-hashtags">هشتگ‌ها</label><input id="edit-hashtags" name="hashtags" placeholder="#NedAi #AIvideo">
+          <label for="edit-quality">یادداشت بررسی کیفیت</label><textarea id="edit-quality" name="quality_notes" rows="3" placeholder="صدا، تصویر، زیرنویس، نسبت تصویر و مواردی که باید بررسی شوند..."></textarea>
+          <div class="editor-actions"><button type="submit">ذخیرهٔ تغییرات</button><button id="draft-kit" class="secondary" type="button">ساخت پیش‌نویس قالبی</button><button id="export-project" class="secondary" type="button">خروجی JSON</button></div>
+          <p id="editor-message" class="message" role="status"></p>
         </form>
       </section>
+    </section>
+    <section id="research-view" class="view">
       <section class="panel">
-        <div class="section-heading"><h2>پروژه‌های من</h2><button id="refresh" class="secondary" type="button">تازه‌سازی</button></div>
-        <div id="projects" class="projects"><p class="muted">برای دیدن پروژه‌ها، برنامهٔ ویندوزی را اجرا کن.</p></div>
+        <h2>مرکز بررسی ترند و ایده</h2>
+        <p class="muted">این لینک‌ها منابع رسمی برای بررسی دستی موضوعات داغ‌اند. در این نسخه هنوز دریافت خودکار آمار ترند فعال نیست.</p>
+        <div class="resource-grid">
+          <a class="resource" href="https://www.tiktok.com/creativecenter/" target="_blank" rel="noopener noreferrer"><strong>TikTok Creative Center</strong><span>بررسی هشتگ‌ها، آهنگ‌ها و ویدیوهای پربازده</span></a>
+          <a class="resource" href="https://www.youtube.com/feed/trending" target="_blank" rel="noopener noreferrer"><strong>YouTube Explore</strong><span>دیدن موضوعات و ویدیوهای پرطرفدار</span></a>
+          <a class="resource" href="https://trends.google.com/trends/" target="_blank" rel="noopener noreferrer"><strong>Google Trends</strong><span>مقایسهٔ علاقهٔ جستجو به موضوعات</span></a>
+        </div>
+        <h3>چک‌لیست انتخاب ایده</h3>
+        <ul class="checklist"><li>آیا موضوع در ۳ ثانیهٔ اول توجه جلب می‌کند؟</li><li>آیا می‌توان آن را با ابزار رایگان تولید کرد؟</li><li>آیا برای دری و انگلیسی قابل ساخت است؟</li><li>آیا ایده اصیل است و کپی مستقیم محتوای دیگران نیست؟</li></ul>
       </section>
     </section>
-    <section class="panel roadmap">
-      <h2>مراحل بعدی سیستم</h2>
-      <div class="steps"><span>۱ · ایده و سناریو</span><span>۲ · پرامپت و منابع</span><span>۳ · تولید و تدوین</span><span>۴ · بررسی کیفیت</span><span>۵ · آماده‌سازی نشر</span></div>
-      <p class="muted">نشر خودکار تا زمان اتصال امن حساب‌ها و تأیید جداگانه فعال نخواهد شد.</p>
+    <section id="workflow-view" class="view">
+      <section class="panel">
+        <h2>مراحل تولید محتوا</h2>
+        <div class="workflow-list">
+          <article><b>۱ · ایده و تحقیق</b><p>انتخاب موضوع، مخاطب و هدف ویدیو؛ بررسی ترند از منابع معتبر.</p></article>
+          <article><b>۲ · سناریو و پرامپت</b><p>نوشتن شروع جذاب، روایت، صحنه‌ها، دیالوگ و پرامپت‌های تولید.</p></article>
+          <article><b>۳ · تولید و تدوین</b><p>ساخت فایل‌ها با ابزارهای نصب‌شده مانند Blender و FFmpeg؛ این نسخه هنوز رندر خودکار را اجرا نمی‌کند.</p></article>
+          <article><b>۴ · بررسی کیفیت</b><p>بازبینی صدا، تصویر، زیرنویس، حق نشر و نسبت تصویر.</p></article>
+          <article><b>۵ · آماده‌سازی نشر</b><p>عنوان، توضیحات، هشتگ و تامبنیل؛ انتشار فقط با تأیید جداگانهٔ تو.</p></article>
+        </div>
+      </section>
     </section>
+    <section class="panel roadmap"><h2>وضعیت اتصال‌ها</h2><p class="muted">داشبورد و ذخیره‌سازی پروژه‌ها محلی است. اتصال مدل هوش مصنوعی، جمع‌آوری خودکار ترند، رندر خودکار و انتشار حساب‌ها هنوز فعال نشده‌اند. برای جلوگیری از هزینه، هیچ API پولی به‌صورت پیش‌فرض وصل نیست.</p></section>
   </main>
-  <footer>ساخته‌شده برای Ned_Ai · نسخهٔ آزمایشی محلی</footer>
+  <footer>ساخته‌شده برای Ned_Ai · نسخهٔ دوم آزمایشی محلی</footer>
   <script src="app.js"></script>
 </body>
 </html>
