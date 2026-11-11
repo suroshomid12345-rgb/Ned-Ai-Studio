@@ -21,6 +21,7 @@
       <button class="nav-tab active" data-view="projects-view">پروژه‌ها و داشبورد</button>
       <button class="nav-tab" data-view="research-view">یافتن ترند و ایده</button>
       <button class="nav-tab" data-view="workflow-view">روند تولید</button>
+      <button class="nav-tab" data-view="settings-view">تنظیمات استودیو</button>
     </nav>
     <section id="projects-view" class="view active">
       <section class="layout">
@@ -114,6 +115,32 @@
           <article><b>۴ · بررسی کیفیت</b><p>بازبینی صدا، تصویر، زیرنویس، حق نشر و نسبت تصویر.</p></article>
           <article><b>۵ · آماده‌سازی نشر</b><p>عنوان، توضیحات، هشتگ و تامبنیل؛ انتشار فقط با تأیید جداگانهٔ تو.</p></article>
         </div>
+      </section>
+    </section>
+    <section id="settings-view" class="view">
+      <section class="panel">
+        <div class="section-heading"><div><span class="eyebrow">STUDIO CONFIGURATION</span><h2>تنظیمات اصلی استودیو</h2></div><button id="reload-settings" class="secondary" type="button">بارگذاری دوباره</button></div>
+        <p class="muted">این تنظیمات روی همین لپ‌تاپ ذخیره می‌شوند و برای پروژه‌های بعدی قابل استفاده‌اند.</p>
+        <div class="settings-grid">
+          <article class="setting-card"><strong>تصویر و انیمیشن</strong><span>واقع‌گرایانه سینمایی؛ شخصیت ثابت یا جدید بر اساس موضوع؛ تولید خودکار با امکان ویرایش.</span></article>
+          <article class="setting-card"><strong>گویندگی</strong><span>صدای مردانه و زنانه قابل انتخاب؛ زبان و سبک بر اساس پروژه و موضوع.</span></article>
+          <article class="setting-card"><strong>زیرنویس</strong><span>انتخاب خودکار زبان بر اساس پروژه؛ امکان روشن و خاموش کردن.</span></article>
+          <article class="setting-card"><strong>موسیقی و تدوین</strong><span>انتخاب خودکار موسیقی و افکت؛ تدوین خودکار با امکان ویرایش دستی.</span></article>
+          <article class="setting-card"><strong>تحقیق و تحلیل</strong><span>تحقیق روزانهٔ ترند از منابع قابل دسترس؛ تحلیل آمار واقعی پس از اتصال حساب‌ها.</span></article>
+          <article class="setting-card"><strong>مدیر مرکزی</strong><span>پیگیری مراحل پروژه و پیشنهاد گام بعدی؛ تصمیم‌های مهم نیازمند اجازهٔ تو هستند.</span></article>
+        </div>
+        <h3>گزینه‌های قابل تنظیم</h3>
+        <div class="settings-controls">
+          <label class="toggle-row"><input id="setting-subtitles" type="checkbox"> زیرنویس در خروجی فعال باشد</label>
+          <label class="toggle-row"><input id="setting-quality" type="checkbox"> بررسی کیفیت پیش از خروجی</label>
+          <label class="toggle-row"><input id="setting-approval" type="checkbox"> نشر فقط با تأیید من انجام شود</label>
+          <label class="toggle-row"><input id="setting-backup" type="checkbox"> پشتیبان‌گیری خودکار فعال باشد</label>
+          <label class="toggle-row"><input id="setting-resource" type="checkbox"> مدیریت هوشمند منابع لپ‌تاپ فعال باشد</label>
+          <label class="toggle-row"><input id="setting-manager" type="checkbox"> مدیر مرکزی فعال باشد</label>
+          <div><label for="setting-resolution">کیفیت پیش‌فرض خروجی</label><select id="setting-resolution"><option value="720p">720p</option><option value="1080p">1080p</option><option value="4K">4K (در صورت پشتیبانی)</option></select></div>
+        </div>
+        <button id="save-settings" type="button">ذخیرهٔ تنظیمات</button>
+        <p id="settings-message" class="message" role="status"></p>
       </section>
     </section>
     <section class="panel roadmap"><h2>وضعیت اتصال‌ها</h2><p class="muted">داشبورد و ذخیره‌سازی پروژه‌ها محلی است. اتصال مدل هوش مصنوعی، جمع‌آوری خودکار ترند، تولید کامل ویدیو و انتشار حساب‌ها هنوز فعال نشده‌اند. برای جلوگیری از هزینه، هیچ API پولی به‌صورت پیش‌فرض وصل نیست.</p></section>
