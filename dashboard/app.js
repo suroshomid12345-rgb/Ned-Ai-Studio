@@ -255,3 +255,50 @@ document.getElementById("make-image-video").addEventListener("click", async even
     button.disabled = false;
   }
 });
+
+
+// Persistent local studio settings.
+async function loadStudioSettings() {
+  const output = document.getElementById("settings-message");
+  try {
+    const data = await api("/api/settings");
+    const s = data.settings;
+    document.getElementById("setting-subtitles").checked = !!s.subtitles_toggle;
+    document.getElementById("setting-quality").checked = !!s.quality_check;
+    document.getElementById("setting-approval").checked = !!s.publishing_requires_approval;
+    document.getElementById("setting-backup").checked = !!s.automatic_backup;
+    document.getElementById("setting-resource").checked = !!s.resource_management;
+    document.getElementById("setting-manager").checked = !!s.central_manager;
+    document.getElementById("setting-resolution").value = s.default_resolution || "1080p";
+    output.textContent = "تنظیمات از فایل محلی خوانده شد.";
+  } catch (error) {
+    output.textContent = "بارگذاری تنظیمات ناموفق بود: " + error.message;
+  }
+}
+
+document.getElementById("save-settings").addEventListener("click", async event => {
+  const button = event.currentTarget;
+  const output = document.getElementById("settings-message");
+  button.disabled = true;
+  output.textContent = "در حال ذخیرهٔ تنظیمات روی لپ‌تاپ...";
+  const payload = {
+    subtitles_toggle: document.getElementById("setting-subtitles").checked,
+    quality_check: document.getElementById("setting-quality").checked,
+    publishing_requires_approval: document.getElementById("setting-approval").checked,
+    automatic_backup: document.getElementById("setting-backup").checked,
+    resource_management: document.getElementById("setting-resource").checked,
+    central_manager: document.getElementById("setting-manager").checked,
+    default_resolution: document.getElementById("setting-resolution").value
+  };
+  try {
+    await api("/api/settings", { method: "PUT", body: JSON.stringify(payload) });
+    output.textContent = "تنظیمات با موفقیت در لپ‌تاپ ذخیره شد.";
+  } catch (error) {
+    output.textContent = "ذخیره انجام نشد: " + error.message;
+  } finally {
+    button.disabled = false;
+  }
+});
+
+document.getElementById("reload-settings").addEventListener("click", loadStudioSettings);
+loadStudioSettings();
