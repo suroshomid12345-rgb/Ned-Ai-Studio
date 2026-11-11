@@ -197,3 +197,61 @@ document.getElementById("run-ffmpeg-test").addEventListener("click", async event
 
 document.getElementById("refresh").addEventListener("click", checkConnection);
 checkConnection();
+
+
+// Local image-to-video workflow (no paid AI service required).
+document.getElementById("make-image-video").addEventListener("click", async event => {
+  const button = event.currentTarget;
+  const picker = document.getElementById("video-images");
+  const uploadStatus = document.getElementById("image-upload-message");
+  const output = document.getElementById("image-video-message");
+  const files = Array.from(picker.files || []);
+  if (!files.length) {
+    uploadStatus.textContent = "اول حداقل یک تصویر انتخاب کن.";
+    return;
+  }
+  if (files.length > 12) {
+    uploadStatus.textContent = "حداکثر ۱۲ تصویر انتخاب کن.";
+    return;
+  }
+  const allowed = [".jpg", ".jpeg", ".png", ".webp"];
+  for (const file of files) {
+    const ext = "." + file.name.split(".").pop().toLowerCase();
+    if (!allowed.includes(ext) || file.size > 15 * 1024 * 1024) {
+      uploadStatus.textContent = "فایل " + file.name + " فرمت یا حجم مجاز ندارد.";
+      return;
+    }
+  }
+  button.disabled = true;
+  output.textContent = "";
+  const uploaded = [];
+  try {
+    for (let i = 0; i < files.length; i++) {
+      uploadStatus.textContent = "در حال انتقال تصویر " + (i + 1) + " از " + files.length + "...";
+      const response = await fetch("/api/media/upload?name=" + encodeURIComponent(files[i].name), {
+        method: "POST",
+        headers: { "Content-Type": "application/octet-stream" },
+        body: files[i]
+      });
+      const result = await response.json();
+      if (!response.ok) throw new Error(result.error || "آپلود تصویر ناموفق بود.");
+      uploaded.push(result.name);
+    }
+    uploadStatus.textContent = files.length + " تصویر با موفقیت به لپ‌تاپ منتقل شد.";
+    output.textContent = "در حال ساخت صحنه‌ها و تدوین ویدیو؛ لطفاً پنجره را نبند...";
+    const result = await api("/api/render/slideshow", {
+      method: "POST",
+      body: JSON.stringify({
+        images: uploaded,
+        seconds: Number(document.getElementById("image-seconds").value),
+        aspect: document.getElementById("video-aspect").value
+      })
+    });
+    output.textContent = result.message + " مدت ویدیو: " + result.duration_seconds +
+      " ثانیه. فایل ذخیره شد: " + result.file;
+  } catch (error) {
+    output.textContent = "ساخت ویدیو انجام نشد: " + error.message;
+  } finally {
+    button.disabled = false;
+  }
+});
