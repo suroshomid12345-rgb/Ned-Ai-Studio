@@ -141,7 +141,6 @@ editorForm.addEventListener("submit", async event => {
 document.getElementById("draft-kit").addEventListener("click", () => {
   const name = editorForm.elements.name.value.trim() || "موضوع ویدیو";
   const idea = editorForm.elements.idea.value.trim() || name;
-  const language = activeProject?.language || "Dari + English";
   setField("script", [
     "شروع جذاب (۰ تا ۳ ثانیه): یک سؤال یا اتفاق غیرمنتظره دربارهٔ " + idea,
     "بخش اصلی: موضوع را در ۳ بخش کوتاه و تصویری توضیح بده.",
@@ -177,6 +176,23 @@ document.getElementById("export-project").addEventListener("click", () => {
 document.getElementById("close-editor").addEventListener("click", () => {
   editor.classList.add("hidden");
   activeProject = null;
+});
+
+document.getElementById("run-ffmpeg-test").addEventListener("click", async event => {
+  const button = event.currentTarget;
+  const output = document.getElementById("render-test-message");
+  button.disabled = true;
+  output.textContent = "در حال آزمایش FFmpeg و ساخت ویدیوی سه‌ثانیه‌ای...";
+  try {
+    const result = await api("/api/render/test", {
+      method: "POST", body: JSON.stringify({ test: true })
+    });
+    output.textContent = result.message + " فایل ذخیره شد: " + result.file;
+  } catch (error) {
+    output.textContent = "آزمایش انجام نشد: " + error.message;
+  } finally {
+    button.disabled = false;
+  }
 });
 
 document.getElementById("refresh").addEventListener("click", checkConnection);
