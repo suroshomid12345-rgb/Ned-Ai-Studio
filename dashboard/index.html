@@ -22,6 +22,7 @@
       <button class="nav-tab" data-view="research-view">یافتن ترند و ایده</button>
       <button class="nav-tab" data-view="workflow-view">روند تولید</button>
       <button class="nav-tab" data-view="settings-view">تنظیمات استودیو</button>
+      <button class="nav-tab" data-view="resources-view">مدیریت منابع</button>
     </nav>
     <section id="projects-view" class="view active">
       <section class="layout">
@@ -146,6 +147,20 @@
         <p class="muted">نسخه‌های ZIP فقط روی لپ‌تاپ و در پوشهٔ workspace/backups ذخیره می‌شوند. هیچ نسخه‌ای خودکار حذف نمی‌شود.</p>
         <div class="editor-actions"><button id="create-backup" type="button">ساخت پشتیبان همین حالا</button><button id="refresh-backup" class="secondary" type="button">بررسی پشتیبان‌ها</button></div>
         <p id="backup-message" class="message" role="status"></p>
+      </section>
+    </section>
+    <section id="resources-view" class="view">
+      <section class="panel">
+        <div class="section-heading"><div><span class="eyebrow">LOCAL SYSTEM MONITOR</span><h2>مدیریت هوشمند منابع لپ‌تاپ</h2></div><button id="refresh-resources" class="secondary" type="button">بررسی دوباره</button></div>
+        <p class="muted">اطلاعات مستقیماً از Windows و درایور NVIDIA خوانده می‌شود. برای سبک ماندن لپ‌تاپ، بررسی فقط با درخواست تو انجام می‌شود.</p>
+        <div class="resource-metrics">
+          <article class="resource-metric"><span>مصرف CPU</span><strong id="resource-cpu">—</strong><small>درصد استفادهٔ لحظه‌ای</small></article>
+          <article class="resource-metric"><span>مصرف RAM</span><strong id="resource-ram">—</strong><small id="resource-ram-detail">حافظهٔ استفاده‌شده</small></article>
+          <article class="resource-metric"><span>GPU</span><strong id="resource-gpu">—</strong><small id="resource-gpu-detail">در انتظار بررسی</small></article>
+        </div>
+        <div class="resource-advice"><strong>پیشنهاد استودیو</strong><p id="resource-recommendation">برای دریافت پیشنهاد، روی «بررسی دوباره» کلیک کن.</p><p id="resource-warnings" class="message" role="status"></p></div>
+        <p id="resource-message" class="message" role="status"></p>
+        <p id="resource-note" class="muted"></p>
       </section>
     </section>
     <section class="panel roadmap"><h2>وضعیت اتصال‌ها</h2><p class="muted">داشبورد و ذخیره‌سازی پروژه‌ها محلی است. اتصال مدل هوش مصنوعی، جمع‌آوری خودکار ترند، تولید کامل ویدیو و انتشار حساب‌ها هنوز فعال نشده‌اند. برای جلوگیری از هزینه، هیچ API پولی به‌صورت پیش‌فرض وصل نیست.</p></section>
