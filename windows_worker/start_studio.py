@@ -5,6 +5,7 @@ import re
 import shutil
 import subprocess
 import uuid
+import zipfile
 from datetime import datetime, timezone
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
@@ -17,6 +18,7 @@ ROOT = Path(__file__).resolve().parent.parent
 DASHBOARD = ROOT / "dashboard"
 WORKSPACE = ROOT / "workspace" / "projects"
 RENDERS = ROOT / "workspace" / "renders"
+BACKUPS = ROOT / "workspace" / "backups"
 HOST = "127.0.0.1"
 PORT = 8765
 STAGES = ["ایده", "سناریو", "پرامپت و منابع", "تولید و تدوین", "بررسی کیفیت", "آماده‌سازی نشر", "آماده"]
@@ -30,6 +32,28 @@ def find_ffmpeg():
     if FFMPEG_FALLBACK.is_file():
         return str(FFMPEG_FALLBACK)
     return None
+
+
+def create_workspace_backup(reason: str = "automatic"):
+    """Create a timestamped ZIP of projects and settings; never include old backups."""
+    settings = studio_settings.load_settings()
+    if not settings.get("automatic_backup", True):
+        return None
+
+    BACKUPS.mkdir(parents=True, exist_ok=True)
+    stamp = datetime.now().strftime("%Y%m%d_%H%M%S_%f")
+    safe_reason = re.sub(r"[^a-zA-Z0-9_-]+", "-", reason).strip("-_") or "automatic"
+    output = BACKUPS / f"ned_ai_backup_{stamp}_{safe_reason}.zip"
+
+    with zipfile.ZipFile(output, "w", compression=zipfile.ZIP_DEFLATED) as archive:
+        for source_dir in (ROOT / "workspace" / "projects", ROOT / "workspace" / "settings"):
+            if not source_dir.is_dir():
+                continue
+            for file_path in source_dir.rglob("*"):
+                if file_path.is_file():
+                    archive.write(file_path, file_path.relative_to(ROOT).as_posix())
+
+    return str(output)
 
 
 def read_project(project_id: str):
@@ -70,6 +94,14 @@ class StudioHandler(SimpleHTTPRequestHandler):
             return self.send_json(200, {"ok": True, "message": "برنامهٔ ویندوزی وصل است"})
         if path == "/api/settings":
             return self.send_json(200, {"settings": studio_settings.load_settings()})
+        if path == "/api/backup/status":
+            files = sorted(BACKUPS.glob("*.zip"), key=lambda item: item.stat().st_mtime, reverse=True) if BACKUPS.is_dir() else []
+            return self.send_json(200, {
+                "enabled": bool(studio_settings.load_settings().get("automatic_backup", True)),
+                "count": len(files),
+                "latest": files[0].name if files else None,
+                "directory": str(BACKUPS)
+            })
         if path == "/api/ffmpeg/status":
             executable = find_ffmpeg()
             if not executable:
@@ -161,7 +193,16 @@ class StudioHandler(SimpleHTTPRequestHandler):
             folder = WORKSPACE / f"{slug}-{project['id'][:8]}"
             folder.mkdir(parents=True, exist_ok=False)
             (folder / "project.json").write_text(json.dumps(project, ensure_ascii=False, indent=2), encoding="utf-8")
-            return self.send_json(201, {"ok": True, "project": project})
+            backup_file = None
+            backup_warning = None
+            try:
+                backup_file = create_workspace_backup("project-created")
+            except OSError as error:
+                backup_warning = str(error)
+            return self.send_json(201, {
+                "ok": True, "project": project,
+                "backup_file": backup_file, "backup_warning": backup_warning
+            })
         except (ValueError, UnicodeDecodeError, json.JSONDecodeError) as error:
             return self.send_json(400, {"error": str(error) or "معلومات ارسالی قابل خواندن نیست."})
         except OSError as error:
@@ -175,7 +216,17 @@ class StudioHandler(SimpleHTTPRequestHandler):
                 if not isinstance(payload, dict):
                     return self.send_json(400, {"error": "تنظیمات ارسالی معتبر نیست."})
                 saved = studio_settings.save_settings(payload)
-                return self.send_json(200, {"ok": True, "settings": saved})
+                backup_file = None
+                backup_warning = None
+                if saved.get("automatic_backup", True):
+                    try:
+                        backup_file = create_workspace_backup("settings-saved")
+                    except OSError as error:
+                        backup_warning = str(error)
+                return self.send_json(200, {
+                    "ok": True, "settings": saved,
+                    "backup_file": backup_file, "backup_warning": backup_warning
+                })
             except (ValueError, UnicodeDecodeError, json.JSONDecodeError) as error:
                 return self.send_json(400, {"error": str(error) or "تنظیمات معتبر نیست."})
             except OSError as error:
@@ -203,7 +254,16 @@ class StudioHandler(SimpleHTTPRequestHandler):
                 return self.send_json(400, {"error": "مرحلهٔ پروژه معتبر نیست."})
             current["updated_at"] = datetime.now(timezone.utc).isoformat()
             file.write_text(json.dumps(current, ensure_ascii=False, indent=2), encoding="utf-8")
-            return self.send_json(200, {"ok": True, "project": current})
+            backup_file = None
+            backup_warning = None
+            try:
+                backup_file = create_workspace_backup("project-updated")
+            except OSError as error:
+                backup_warning = str(error)
+            return self.send_json(200, {
+                "ok": True, "project": current,
+                "backup_file": backup_file, "backup_warning": backup_warning
+            })
         except (ValueError, UnicodeDecodeError, json.JSONDecodeError) as error:
             return self.send_json(400, {"error": str(error) or "معلومات ارسالی قابل خواندن نیست."})
         except OSError as error:
