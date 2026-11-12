@@ -302,3 +302,32 @@ document.getElementById("save-settings").addEventListener("click", async event =
 
 document.getElementById("reload-settings").addEventListener("click", loadStudioSettings);
 loadStudioSettings();
+
+async function loadBackupStatus() {
+  const output = document.getElementById("backup-message");
+  try {
+    const data = await api("/api/backup/status");
+    output.textContent = "تعداد پشتیبان‌ها: " + data.count + " · آخرین نسخه: " + (data.latest || "هنوز ساخته نشده") + " · محل: " + data.directory;
+  } catch (error) {
+    output.textContent = "خواندن وضعیت پشتیبان ناموفق بود: " + error.message;
+  }
+}
+
+document.getElementById("create-backup").addEventListener("click", async event => {
+  const button = event.currentTarget;
+  const output = document.getElementById("backup-message");
+  button.disabled = true;
+  output.textContent = "در حال ساخت فایل ZIP پشتیبان...";
+  try {
+    const data = await api("/api/backup/create", { method: "POST", body: JSON.stringify({}) });
+    output.textContent = "پشتیبان ساخته شد: " + data.file;
+    await loadBackupStatus();
+  } catch (error) {
+    output.textContent = "ساخت پشتیبان ناموفق بود: " + error.message;
+  } finally {
+    button.disabled = false;
+  }
+});
+
+document.getElementById("refresh-backup").addEventListener("click", loadBackupStatus);
+loadBackupStatus();
