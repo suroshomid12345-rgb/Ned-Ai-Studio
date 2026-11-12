@@ -13,6 +13,7 @@ from urllib.parse import unquote, urlparse
 
 import video_maker
 import studio_settings
+import resource_monitor
 
 ROOT = Path(__file__).resolve().parent.parent
 DASHBOARD = ROOT / "dashboard"
@@ -102,6 +103,11 @@ class StudioHandler(SimpleHTTPRequestHandler):
                 "latest": files[0].name if files else None,
                 "directory": str(BACKUPS)
             })
+        if path == "/api/resources/status":
+            try:
+                return self.send_json(200, resource_monitor.get_resource_status())
+            except Exception as error:
+                return self.send_json(200, {"ok": False, "message": f"خواندن منابع سیستم ناموفق بود: {error}"})
         if path == "/api/ffmpeg/status":
             executable = find_ffmpeg()
             if not executable:
