@@ -34,10 +34,10 @@ def find_ffmpeg():
     return None
 
 
-def create_workspace_backup(reason: str = "automatic"):
+def create_workspace_backup(reason: str = "automatic", force: bool = False):
     """Create a timestamped ZIP of projects and settings; never include old backups."""
     settings = studio_settings.load_settings()
-    if not settings.get("automatic_backup", True):
+    if not force and not settings.get("automatic_backup", True):
         return None
 
     BACKUPS.mkdir(parents=True, exist_ok=True)
@@ -137,6 +137,17 @@ class StudioHandler(SimpleHTTPRequestHandler):
 
     def do_POST(self):
         path = urlparse(self.path).path
+        if path == "/api/backup/create":
+            try:
+                self.read_body()
+                backup_file = create_workspace_backup("manual", force=True)
+                if not backup_file:
+                    return self.send_json(500, {"error": "فایل پشتیبان ساخته نشد."})
+                return self.send_json(200, {"ok": True, "file": backup_file})
+            except (ValueError, UnicodeDecodeError, json.JSONDecodeError) as error:
+                return self.send_json(400, {"error": str(error) or "درخواست معتبر نیست."})
+            except OSError as error:
+                return self.send_json(500, {"error": f"ساخت پشتیبان ناموفق بود: {error}"})
         if path == "/api/media/upload":
             return video_maker.upload(self)
         if path == "/api/render/slideshow":
