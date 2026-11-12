@@ -331,3 +331,33 @@ document.getElementById("create-backup").addEventListener("click", async event =
 
 document.getElementById("refresh-backup").addEventListener("click", loadBackupStatus);
 loadBackupStatus();
+
+
+// Local Windows CPU, RAM and NVIDIA GPU monitor. Manual refresh keeps background load low.
+async function loadResourceStatus() {
+  const output = document.getElementById("resource-message");
+  output.textContent = "در حال بررسی منابع سیستم...";
+  try {
+    const data = await api("/api/resources/status");
+    if (!data.ok) throw new Error(data.message || "اطلاعات منابع در دسترس نیست.");
+    document.getElementById("resource-cpu").textContent = data.cpu_percent + "%";
+    document.getElementById("resource-ram").textContent = data.memory.used_percent + "%";
+    document.getElementById("resource-ram-detail").textContent =
+      data.memory.available_gb + " GB آزاد از " + data.memory.total_gb + " GB";
+    const gpu = data.gpu || {};
+    document.getElementById("resource-gpu").textContent = gpu.available ? gpu.usage_percent + "%" : "نامشخص";
+    document.getElementById("resource-gpu-detail").textContent = gpu.available
+      ? gpu.name + " · " + gpu.memory_used_mb + "/" + gpu.memory_total_mb + " MB"
+      : (gpu.message || "اطلاعات GPU در دسترس نیست.");
+    document.getElementById("resource-recommendation").textContent =
+      data.recommendation + " وضوح پیشنهادی: " + data.recommended_resolution + ".";
+    document.getElementById("resource-warnings").textContent =
+      (data.warnings && data.warnings.length) ? data.warnings.join(" ") : "هشدار خاصی شناسایی نشد.";
+    document.getElementById("resource-note").textContent =
+      "تعداد پردازنده‌های منطقی: " + data.logical_processors + ". " + (data.note || "");
+    output.textContent = "بررسی منابع با موفقیت انجام شد.";
+  } catch (error) {
+    output.textContent = "بررسی منابع ناموفق بود: " + error.message;
+  }
+}
+document.getElementById("refresh-resources").addEventListener("click", loadResourceStatus);
